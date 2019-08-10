@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SCAN2 = 0x0001;
     private UFormInputLayout mFirstName;
     private UFormInputLayout mLastName;
+    private TextView tvResultLabel;
     private TextView tvResult;
 
     @Override
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setElevation(0);
             actionBar.setTitle("欢迎使用");
         }
+        tvResultLabel = findViewById(R.id.tv_result_label);
         tvResult = findViewById(R.id.tv_result);
         mFirstName = findViewById(R.id.first_name_input);
         mLastName = findViewById(R.id.last_name_input);
@@ -77,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = getIntent().getData();
             if (uri != null) {
-                System.out.println("uri整体" + uri.toString());
                 String firstName = uri.getQueryParameter("firstName");
                 mFirstName.setValue(firstName);
                 String lastName = uri.getQueryParameter("lastName");
@@ -125,9 +127,34 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     Bundle bundle = data.getExtras();
                     if (bundle != null) {
+                        Uri uri = data.getData();
+                        if (uri != null) {
+                            String firstName = uri.getQueryParameter("firstName");
+                            mFirstName.setValue(firstName);
+                            String lastName = uri.getQueryParameter("lastName");
+                            mLastName.setValue(lastName);
+                        }
                         String result = bundle.getString(CaptureActivity.EXTRA_STRING);
                         tvResult.setText(result);
                         CustomUtils.copy(this, result);
+
+                        Uri uri1 = Uri.parse(result);
+                        if (uri1 != null) {
+                            String firstName = uri1.getQueryParameter("firstName");
+                            String lastName = uri1.getQueryParameter("lastName");
+
+                            if (TextUtils.isEmpty(firstName) | TextUtils.isEmpty(lastName)) {
+                                tvResult.setVisibility(View.GONE);
+                                tvResultLabel.setVisibility(View.GONE);
+                                Toast.makeText(this, "二维码中缺少所需参数", Toast.LENGTH_SHORT)
+                                     .show();
+                            } else {
+                                tvResult.setVisibility(View.VISIBLE);
+                                tvResultLabel.setVisibility(View.VISIBLE);
+                                mFirstName.setValue(firstName);
+                                mLastName.setValue(lastName);
+                            }
+                        }
                     }
                 }
                 break;

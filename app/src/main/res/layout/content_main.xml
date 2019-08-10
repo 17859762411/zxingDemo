@@ -39,6 +39,7 @@
         app:type="manual" />
 
     <TextView
+        android:id="@+id/tv_result_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -46,7 +47,8 @@
         android:padding="10dp"
         android:drawableStart="@drawable/result"
         android:text="扫描结果(自动复制到剪切板)"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_result"
@@ -54,7 +56,8 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:padding="10dp"
-        android:textIsSelectable="true" />
+        android:textIsSelectable="true"
+        android:visibility="visible" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
