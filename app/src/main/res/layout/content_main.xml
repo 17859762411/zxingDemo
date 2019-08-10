@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                              android:id="@+id/ll_all"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="match_parent"
+                                              android:orientation="vertical">
+
+    <com.sz.ucar.bwued.lib.forminput.UFormInputLayout
+        android:id="@+id/first_name_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/u_color_ffffff"
+        app:action_icon="@drawable/u_fii_action"
+        app:action_margin_right="@dimen/dd_dimen_40px"
+        app:content_type="all_allow"
+        app:enable="true"
+        app:gravity="left"
+        app:hint="请输入"
+        app:label="first_name"
+        app:margin_right="@dimen/dd_dimen_96px"
+        app:max_length="20"
+        app:type="manual" />
+
+    <com.sz.ucar.bwued.lib.forminput.UFormInputLayout
+        android:id="@+id/last_name_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/u_color_ffffff"
+        app:action_icon="@drawable/u_fii_action"
+        app:action_margin_right="@dimen/dd_dimen_40px"
+        app:content_type="all_allow"
+        app:enable="true"
+        app:gravity="left"
+        app:hint="请输入"
+        app:label="last_name"
+        app:margin_right="@dimen/dd_dimen_96px"
+        app:max_length="20"
+        app:type="manual" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="start|center"
+        android:padding="10dp"
+        android:drawableStart="@drawable/result"
+        android:text="扫描结果(自动复制到剪切板)"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="10dp"
+        android:textIsSelectable="true" />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

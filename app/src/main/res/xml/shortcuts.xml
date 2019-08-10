@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/qr_example"
+        android:shortcutDisabledMessage="@string/can_not_use"
+        android:shortcutId="scan"
+        android:shortcutLongLabel="@string/getQR"
+        android:shortcutShortLabel="@string/getQR">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.android.lvtong.zxingdemo.zbar.CaptureActivity"
+            android:targetPackage="com.android.lvtong.zxingdemo" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>
