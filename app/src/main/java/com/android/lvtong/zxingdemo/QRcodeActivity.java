@@ -1,23 +1,38 @@
 package com.android.lvtong.zxingdemo;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.android.lvtong.implementationlibary.CustomDialog;
+import com.android.lvtong.implementationlibary.DialogUtil;
+import com.android.lvtong.zxingdemo.util.ImgUtils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Hashtable;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.android.lvtong.zxingdemo.util.NetworkUtils.buildUrl;
 
 /**
@@ -29,6 +44,9 @@ public class QRcodeActivity extends AppCompatActivity {
     private String lastName;
     private ImageView mImageView;
     private int width;
+    private Bitmap bitmap;
+
+    private boolean hasPermission = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +77,90 @@ public class QRcodeActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.imageView);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, width);
         mImageView.setLayoutParams(params);
+        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                showSaveDialog();
+                return true;
+            }
+        });
+    }
+
+    private void showSaveDialog() {
+        DialogUtil.showDialog(this, "确认保存？", null, new CustomDialog.OnCustomClickedListener() {
+            @Override
+            public void onPositiveButtonClicked(CustomDialog dialog) {
+                if (hasPermission) {
+                    if (!ImgUtils.saveImageToGallery(QRcodeActivity.this, bitmap)) {
+                        Toast.makeText(QRcodeActivity.this, "保存失败", Toast.LENGTH_SHORT)
+                             .show();
+                    }
+                } else {
+                    checkActivityPermission();
+                }
+            }
+
+            @Override
+            public void onNegativeButtonClicked(CustomDialog dialog) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    /** 首先检查权限 */
+    private void checkActivityPermission() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                DialogUtil.showDialog(this, "是否前往设置打开权限", "缺少必要权限将使部分功能无法使用",
+                                      new CustomDialog.OnCustomClickedListener() {
+                                          @Override
+                                          public void onPositiveButtonClicked(CustomDialog dialog) {
+                                              toSelfSetting(QRcodeActivity.this);
+                                          }
+
+                                          @Override
+                                          public void onNegativeButtonClicked(CustomDialog dialog) {
+                                              dialog.dismiss();
+                                          }
+                                      });
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE}, 0x01);
+            }
+        }
+    }
+
+    private void toSelfSetting(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + context.getPackageName()));
+        startActivity(intent);
+    }
+
+    /**
+     * onRequestPermissionsResult方法重写，Toast显示用户是否授权
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions,
+            @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        StringBuilder requestPermissionsResult = new StringBuilder();
+        if (requestCode == 0x01) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PERMISSION_GRANTED) {
+                    requestPermissionsResult.append(permissions[i])
+                                            .append(" 申请成功");
+                } else {
+                    hasPermission = false;
+                    requestPermissionsResult.append(permissions[i])
+                                            .append(" 申请失败");
+                }
+            }
+        }
+        Toast.makeText(this, requestPermissionsResult, Toast.LENGTH_SHORT)
+             .show();
     }
 
     private void loadData() {
@@ -93,12 +195,13 @@ public class QRcodeActivity extends AppCompatActivity {
                 }
             }
             //生成二维码图片的格式，使用ARGB_8888
-            Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+
+            bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             bitmap.setPixels(pixels, 0, w, 0, 0, w, h);
             //显示到我们的ImageView上面
             mImageView.setImageBitmap(bitmap);
         } catch (WriterException e) {
-            e.printStackTrace();
+            Log.d("QRcodeActivity", "e:" + e);
         }
     }
 }

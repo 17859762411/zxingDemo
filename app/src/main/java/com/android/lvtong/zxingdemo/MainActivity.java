@@ -142,10 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         if (uri1 != null) {
                             String firstName = uri1.getQueryParameter("firstName");
                             String lastName = uri1.getQueryParameter("lastName");
-
                             if (TextUtils.isEmpty(firstName) | TextUtils.isEmpty(lastName)) {
-                                tvResult.setVisibility(View.GONE);
-                                tvResultLabel.setVisibility(View.GONE);
                                 Toast.makeText(this, "二维码中缺少所需参数", Toast.LENGTH_SHORT)
                                      .show();
                             } else {
