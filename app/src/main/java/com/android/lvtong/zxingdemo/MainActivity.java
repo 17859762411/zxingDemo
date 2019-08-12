@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvResultLabel;
     private TextView tvResult;
 
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = getIntent().getData();
             if (uri != null) {
-                String firstName = uri.getQueryParameter("firstName");
+                String firstName = uri.getQueryParameter(FIRST_NAME);
                 mFirstName.setValue(firstName);
-                String lastName = uri.getQueryParameter("lastName");
+                String lastName = uri.getQueryParameter(LAST_NAME);
                 mLastName.setValue(lastName);
             }
         }
@@ -129,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
                     if (bundle != null) {
                         Uri uri = data.getData();
                         if (uri != null) {
-                            String firstName = uri.getQueryParameter("firstName");
+                            String firstName = uri.getQueryParameter(FIRST_NAME);
                             mFirstName.setValue(firstName);
-                            String lastName = uri.getQueryParameter("lastName");
+                            String lastName = uri.getQueryParameter(LAST_NAME);
                             mLastName.setValue(lastName);
                         }
                         String result = bundle.getString(CaptureActivity.EXTRA_STRING);
@@ -140,14 +145,14 @@ public class MainActivity extends AppCompatActivity {
 
                         Uri uri1 = Uri.parse(result);
                         if (uri1 != null) {
-                            String firstName = uri1.getQueryParameter("firstName");
-                            String lastName = uri1.getQueryParameter("lastName");
+                            tvResult.setVisibility(View.VISIBLE);
+                            tvResultLabel.setVisibility(View.VISIBLE);
+                            String firstName = uri1.getQueryParameter(FIRST_NAME);
+                            String lastName = uri1.getQueryParameter(LAST_NAME);
                             if (TextUtils.isEmpty(firstName) | TextUtils.isEmpty(lastName)) {
                                 Toast.makeText(this, "二维码中缺少所需参数", Toast.LENGTH_SHORT)
                                      .show();
                             } else {
-                                tvResult.setVisibility(View.VISIBLE);
-                                tvResultLabel.setVisibility(View.VISIBLE);
                                 mFirstName.setValue(firstName);
                                 mLastName.setValue(lastName);
                             }

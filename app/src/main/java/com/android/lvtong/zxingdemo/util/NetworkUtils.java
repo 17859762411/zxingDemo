@@ -13,12 +13,10 @@ public class NetworkUtils {
     private static final String LAST_NAME = "lastName";
 
     public static Uri buildUrl(String firstName, String lastName) {
-        Uri uri = Uri.parse(BASE_URL)
-                     .buildUpon()
-                     .appendQueryParameter(FIRST_NAME, firstName)
-                     .appendQueryParameter(LAST_NAME, lastName)
-                     .build();
-        System.out.println(uri);
-        return uri;
+        return Uri.parse(BASE_URL)
+                  .buildUpon()
+                  .appendQueryParameter(FIRST_NAME, firstName)
+                  .appendQueryParameter(LAST_NAME, lastName)
+                  .build();
     }
 }

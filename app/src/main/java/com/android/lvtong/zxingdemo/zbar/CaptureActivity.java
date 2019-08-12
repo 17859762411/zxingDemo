@@ -78,10 +78,10 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
     }
 
     private void initView() {
-        scanPreview = (SurfaceView) findViewById(R.id.capture_preview);
-        scanContainer = (RelativeLayout) findViewById(R.id.capture_container);
-        scanCropView = (RelativeLayout) findViewById(R.id.capture_crop_view);
-        scanLine = (ImageView) findViewById(R.id.capture_scan_line);
+        scanPreview = findViewById(R.id.capture_preview);
+        scanContainer = findViewById(R.id.capture_container);
+        scanCropView = findViewById(R.id.capture_crop_view);
+        scanLine = findViewById(R.id.capture_scan_line);
         findViewById(R.id.capture_imageview_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
