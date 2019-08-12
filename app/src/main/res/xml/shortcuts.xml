@@ -5,8 +5,8 @@
         android:icon="@drawable/qr_example"
         android:shortcutDisabledMessage="@string/can_not_use"
         android:shortcutId="scan"
-        android:shortcutLongLabel="@string/getQR"
-        android:shortcutShortLabel="@string/getQR">
+        android:shortcutLongLabel="@string/scan"
+        android:shortcutShortLabel="@string/scan">
 
         <intent
             android:action="android.intent.action.VIEW"
