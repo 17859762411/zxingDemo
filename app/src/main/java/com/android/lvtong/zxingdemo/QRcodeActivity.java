@@ -38,8 +38,6 @@ public class QRcodeActivity extends AppCompatActivity {
     private String lastName;
     private int width;
 
-    private ImageView mImageView;
-    private Bitmap bitmap;
     private Bitmap llBitmap;
     private LinearLayout llCenter;
     private TextView tvFirstName;
@@ -76,8 +74,8 @@ public class QRcodeActivity extends AppCompatActivity {
         //设置ImageView的宽高
         tvFirstName = findViewById(R.id.tv_first_name);
         tvLastName = findViewById(R.id.tv_last_name);
-        mImageView = findViewById(R.id.imageView);
-        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 showSaveDialog();
@@ -92,6 +90,28 @@ public class QRcodeActivity extends AppCompatActivity {
         llCenter.setLayoutParams(llParams);
     }
 
+    private void showSaveDialog() {
+        DialogUtil.showDialog(this, "确认保存？", null, new CustomDialog.OnCustomClickedListener() {
+            @Override
+            public void onPositiveButtonClicked(CustomDialog dialog) {
+                llBitmap = ImgUtils.getBitmap(llCenter);
+                if (hasPermission) {
+                    if (!ImgUtils.saveImageToGallery(QRcodeActivity.this, llBitmap)) {
+                        Toast.makeText(QRcodeActivity.this, "保存失败", Toast.LENGTH_SHORT)
+                             .show();
+                    }
+                } else {
+                    checkActivityPermission();
+                }
+            }
+
+            @Override
+            public void onNegativeButtonClicked(CustomDialog dialog) {
+                dialog.dismiss();
+            }
+        });
+    }
+
     private void loadData() {
         Bundle bundle = getIntent().getBundleExtra("bundle");
         firstName = bundle.getString("first_name");
@@ -100,7 +120,6 @@ public class QRcodeActivity extends AppCompatActivity {
             tvFirstName.setText(firstName);
             tvLastName.setText(lastName);
         }
-
     }
 
     /** 首先检查权限 */
@@ -158,27 +177,4 @@ public class QRcodeActivity extends AppCompatActivity {
         Toast.makeText(this, requestPermissionsResult, Toast.LENGTH_SHORT)
              .show();
     }
-
-    private void showSaveDialog() {
-        DialogUtil.showDialog(this, "确认保存？", null, new CustomDialog.OnCustomClickedListener() {
-            @Override
-            public void onPositiveButtonClicked(CustomDialog dialog) {
-                llBitmap = ImgUtils.getBitmap(llCenter);
-                if (hasPermission) {
-                    if (!ImgUtils.saveImageToGallery(QRcodeActivity.this, llBitmap)) {
-                        Toast.makeText(QRcodeActivity.this, "保存失败", Toast.LENGTH_SHORT)
-                             .show();
-                    }
-                } else {
-                    checkActivityPermission();
-                }
-            }
-
-            @Override
-            public void onNegativeButtonClicked(CustomDialog dialog) {
-                dialog.dismiss();
-            }
-        });
-    }
-
 }

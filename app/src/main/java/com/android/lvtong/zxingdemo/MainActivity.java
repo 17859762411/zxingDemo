@@ -33,15 +33,12 @@ public class MainActivity extends AppCompatActivity {
     /** 扫描二维码 */
     private static final int REQUEST_CODE_SCAN = 0x0000;
     private static final int REQUEST_CODE_SCAN2 = 0x0001;
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
     private UFormInputLayout mFirstName;
     private UFormInputLayout mLastName;
     private TextView tvResultLabel;
     private TextView tvResult;
-
-    private static final String FIRST_NAME = "firstName";
-    private static final String LAST_NAME = "lastName";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,14 +142,14 @@ public class MainActivity extends AppCompatActivity {
 
                         Uri uri1 = Uri.parse(result);
                         if (uri1 != null) {
-                            tvResult.setVisibility(View.VISIBLE);
-                            tvResultLabel.setVisibility(View.VISIBLE);
                             String firstName = uri1.getQueryParameter(FIRST_NAME);
                             String lastName = uri1.getQueryParameter(LAST_NAME);
                             if (TextUtils.isEmpty(firstName) | TextUtils.isEmpty(lastName)) {
                                 Toast.makeText(this, "二维码中缺少所需参数", Toast.LENGTH_SHORT)
                                      .show();
                             } else {
+                                tvResult.setVisibility(View.VISIBLE);
+                                tvResultLabel.setVisibility(View.VISIBLE);
                                 mFirstName.setValue(firstName);
                                 mLastName.setValue(lastName);
                             }
