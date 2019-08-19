@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LAST_NAME = "lastName";
     private UFormInputLayout mFirstName;
     private UFormInputLayout mLastName;
+    private EditText etString;
     private TextView tvResultLabel;
     private TextView tvResult;
 
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         tvResult = findViewById(R.id.tv_result);
         mFirstName = findViewById(R.id.first_name_input);
         mLastName = findViewById(R.id.last_name_input);
+        etString = findViewById(R.id.et_string);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,15 +112,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_get_qr) {
-            Bundle bundle = new Bundle();
-            bundle.putString("first_name", mFirstName.getValue());
-            bundle.putString("last_name", mLastName.getValue());
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, QRcodeActivity.class);
-            intent.putExtra("bundle", bundle);
-            startActivity(intent);
+            showPopUpMenu();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -163,20 +160,53 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void showPopUpMenu() {
+        PopupMenu popup = new PopupMenu(this, findViewById(R.id.action_get_qr));
+        popup.getMenuInflater()
+             .inflate(R.menu.second_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item_parameter:
+                        Bundle bundle1 = new Bundle();
+                        bundle1.putInt("type", 0);
+                        bundle1.putString("first_name", mFirstName.getValue());
+                        bundle1.putString("last_name", mLastName.getValue());
+                        Intent intent1 = new Intent();
+                        intent1.setClass(MainActivity.this, QRcodeActivity.class);
+                        intent1.putExtra("bundle", bundle1);
+                        startActivity(intent1);
+                        break;
+                    case R.id.item_string:
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putInt("type", 1);
+                        bundle2.putString("string", etString.getText()
+                                                            .toString());
+                        Intent intent2 = new Intent();
+                        intent2.setClass(MainActivity.this, QRcodeActivity.class);
+                        intent2.putExtra("bundle", bundle2);
+                        startActivity(intent2);
+                        break;
+                    default:
+                }
+                return true;
+            }
+        });
+        popup.show();
+    }
+
     /** 权限请求结果 */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    goScan();
-                } else {
-                    Toast.makeText(this, "你拒绝了权限申请，可能无法打开相机扫码哟！", Toast.LENGTH_SHORT)
-                         .show();
-                }
-                break;
-            default:
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                goScan();
+            } else {
+                Toast.makeText(this, "你拒绝了权限申请，可能无法打开相机扫码哟！", Toast.LENGTH_SHORT)
+                     .show();
+            }
         }
     }
 }

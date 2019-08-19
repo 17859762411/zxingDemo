@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/ll_all"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/dd_dimen_20px"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.sz.ucar.bwued.lib.forminput.UFormInputLayout
+            android:id="@+id/first_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/u_color_ffffff"
+            app:action_margin_right="@dimen/dd_dimen_40px"
+            app:content_type="all_allow"
+            app:enable="true"
+            app:hint="请输入"
+            app:label="first_name"
+            app:max_length="20"
+            app:type="manual" />
+
+        <com.sz.ucar.bwued.lib.forminput.UFormInputLayout
+            android:id="@+id/last_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/u_color_ffffff"
+            app:action_margin_right="@dimen/dd_dimen_40px"
+            app:content_type="all_allow"
+            app:enable="true"
+            app:hint="请输入"
+            app:label="last_name"
+            app:max_length="20"
+            app:type="manual" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dd_dimen_20px"
+        android:background="@color/u_color_ffffff"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_string"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/ed_hint"
+            android:inputType="textAutoComplete"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+
+
+</LinearLayout>

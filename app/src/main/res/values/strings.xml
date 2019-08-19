@@ -12,4 +12,6 @@
         \n请点击”设置”->在应用程序中找到”popon”->权限管理->%2$s->”允许”即可 </string>
     <string name="camera">摄像头(相机)</string>
     <string name="can_not_use">不可用</string>
+    <string name="nullString">null</string>
+    <string name="ed_hint">使用String生成二维码</string>
 </resources>

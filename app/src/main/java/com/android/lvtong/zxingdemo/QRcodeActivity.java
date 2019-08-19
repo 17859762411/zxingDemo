@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -34,48 +35,49 @@ import static com.android.lvtong.zxingdemo.util.NetworkUtils.buildUrl;
  */
 public class QRcodeActivity extends AppCompatActivity {
 
+    private static final int REQUEST_1 = 0x01;
     private String firstName;
     private String lastName;
     private int width;
-
     private Bitmap llBitmap;
+    private Bitmap ivBitmap;
     private LinearLayout llCenter;
     private TextView tvFirstName;
     private TextView tvLastName;
-
+    private ImageView ivCenter;
     private boolean hasPermission = true;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
-        getWindow().setBackgroundDrawableResource(android.R.color.white);
-        ActionBar actionBar = this.getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.backup_32);
-            actionBar.setElevation(0);
-        }
-
         initView();
         loadData();
-        String url = buildUrl(firstName, lastName).toString();
-        ImgUtils.createImage(url, width, width);
+        /*图像生成*/
+        ivBitmap = ImgUtils.createImage(url, width, width);
+        if (ivBitmap == null) {
+            Toast.makeText(this, "null", Toast.LENGTH_SHORT)
+                 .show();
+        } else {
+            ivCenter.setImageBitmap(ivBitmap);
+        }
     }
 
     private void initView() {
-        //获取屏幕宽度
+        intHeader();
+        /*获取屏幕宽度*/
         WindowManager manager = this.getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay()
                .getMetrics(outMetrics);
         width = outMetrics.widthPixels;
 
-        //设置ImageView的宽高
+        /*设置ImageView的宽高*/
         tvFirstName = findViewById(R.id.tv_first_name);
         tvLastName = findViewById(R.id.tv_last_name);
-        ImageView imageView = findViewById(R.id.imageView);
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+        ivCenter = findViewById(R.id.imageView);
+        ivCenter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 showSaveDialog();
@@ -83,11 +85,49 @@ public class QRcodeActivity extends AppCompatActivity {
             }
         });
 
-        //获取布局的bitmap
+        /*获取布局的bitmap*/
         llCenter = findViewById(R.id.ll_center);
         LinearLayout.LayoutParams llParams =
                 new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         llCenter.setLayoutParams(llParams);
+    }
+
+    private void loadData() {
+        /*字段取值赋值*/
+        Bundle bundle = getIntent().getBundleExtra("bundle");
+        switch (bundle.getInt("type")) {
+            case 0:
+                tvFirstName.setVisibility(View.VISIBLE);
+                tvLastName.setVisibility(View.VISIBLE);
+                firstName = bundle.getString("first_name");
+                lastName = bundle.getString("last_name");
+                if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName)) {
+                    tvFirstName.setText(firstName);
+                    tvLastName.setText(lastName);
+                } else {
+                    tvFirstName.setText(R.string.nullString);
+                    tvLastName.setText(R.string.nullString);
+                }
+                url = buildUrl(firstName, lastName).toString();
+                break;
+            case 1:
+                tvFirstName.setVisibility(View.GONE);
+                tvLastName.setVisibility(View.GONE);
+                url = bundle.getString("string");
+                break;
+            default:
+        }
+    }
+
+    private void intHeader() {
+        getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setElevation(0);
+            actionBar.setTitle("欢迎使用");
+        }
     }
 
     private void showSaveDialog() {
@@ -110,16 +150,6 @@ public class QRcodeActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-    }
-
-    private void loadData() {
-        Bundle bundle = getIntent().getBundleExtra("bundle");
-        firstName = bundle.getString("first_name");
-        lastName = bundle.getString("last_name");
-        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName)) {
-            tvFirstName.setText(firstName);
-            tvLastName.setText(lastName);
-        }
     }
 
     /** 首先检查权限 */
@@ -162,7 +192,7 @@ public class QRcodeActivity extends AppCompatActivity {
             @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         StringBuilder requestPermissionsResult = new StringBuilder();
-        if (requestCode == 0x01) {
+        if (requestCode == REQUEST_1) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] == PERMISSION_GRANTED) {
                     requestPermissionsResult.append(permissions[i])
